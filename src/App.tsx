@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import './App.css';
+import styled from '@emotion/styled';
+import Product from './components/Product.tsx';
 
-interface ProductInterface {
-  category: string;
-  description: string;
-  id: number;
-  image: string;
-  price: number;
-  rating: {
-    rate: number;
-    count: number;
-  }
-  title: string;
-}
+const StyledApp = styled.div`
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+`
+const StyledMain = styled.main`
+  display: flex;
+  flex-wrap: wrap;
+`
 
 function App() {
   const [products, setProducts] = useState([])
+  const [searchValue, setSearchValue] = useState('')
+  const apiEndpoint = 'https://fakestoreapi.com/products'
 
   const fetchProducts = () => {
-    fetch('https://fakestoreapi.com/products')
+    fetch(apiEndpoint)
       .then(res => res.json())
       .then(data => setProducts(data))
   }
@@ -27,24 +27,30 @@ function App() {
     fetchProducts()
   }, [])
 
+  const searchProducts = (category: string) => {
+    const productsMatchingSearch = fetch(`${apiEndpoint}/category/${category}`)
+      .then(res => res.json())
+      .then(data => setProducts(data))
+
+    return productsMatchingSearch
+  }
+
   return (
-    <div className="App">
+    <StyledApp>
       <header>
         <h1>My Store</h1>
+        <label htmlFor='search'>Search by Category (electronics, jewelery, men's clothing, women's clothing)</label>
+        <input
+          type='text'
+          id='search'
+          onChange={e => setSearchValue(e.target.value)}
+        />
+        <button onClick={() => searchProducts(searchValue)}>Search</button>
       </header>
-      <main style={{display: 'flex', flexWrap: 'wrap'}}>
-      {products.map((product: ProductInterface) => {
-        const {title, image, price, id} = product
-        return (
-          <div key={id} style={{width:'33%'}}>
-            {/* {console.log(product)} */}
-            <h3>{title}</h3>
-            <img src={image} alt={title} style={{maxWidth:'100%'}} />
-            <p>${price}</p>
-          </div>
-        )})}
-      </main>
-    </div>
+      <StyledMain>
+        {products.length < 1 ? <p>No matching products, sorry</p> : <Product productList={products}/>}
+      </StyledMain>
+    </StyledApp>
   );
 }
 
