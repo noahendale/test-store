@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import Product from './components/Product.tsx';
 
@@ -31,9 +31,16 @@ function App() {
     fetchProducts()
   }, [])
 
-  const searchProducts = (category: string) => {
-    const productsMatchingSearch = fetch(`${apiEndpoint}/category/${category}`)
-      .then(res => res.json())
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const productsMatchingSearch = fetch(`${apiEndpoint}/category/${searchValue}`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => setProducts(data))
 
     return productsMatchingSearch
@@ -43,13 +50,16 @@ function App() {
     <StyledApp>
       <header>
         <StyledHeader>My Store</StyledHeader>
-        <label htmlFor='search'>Search by Category (electronics, jewelery, men's clothing, women's clothing)</label>
-        <input
-          type='text'
-          id='search'
-          onChange={e => setSearchValue(e.target.value)}
-        />
-        <button onClick={() => searchProducts(searchValue)}>Search</button>
+        <form onSubmit={handleFormSubmit}>
+          <label htmlFor='search'>Search by Category (electronics, jewelery, men's clothing, women's clothing)</label>
+          <input
+            type='text'
+            id='search'
+            onChange={e => setSearchValue(e.target.value)}
+            required
+          />
+          <button type='submit'>Search</button>
+        </form>
       </header>
       <StyledMain>
         {products.length < 1 ? <p>No matching products, sorry</p> : <Product productList={products}/>}
