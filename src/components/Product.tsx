@@ -19,19 +19,26 @@ interface ProductListInterface {
 }
 
 const ProductContainer = styled.div`
-  width: calc(50% - 1rem);
+  width: 100%;
   margin: 1.5rem 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  padding: 1rem;
+  border: 1px solid black;
+  border-radius: 10px;
 
-  @media (min-width: 640px) {
-    width: calc(33% - 1rem);
+  @media (min-width: 360) {
+    width: calc(50% - 3rem);
   }
 
-  h3 {
+  @media (min-width: 640px) {
+    width: calc(33% - 3rem);
+  }
+
+  h4 {
     font-family: 'Rubik', sans-serif;
-    font-weight: 500;
+    font-weight: 400;
     margin: 1rem 0;
   }
 `
@@ -68,8 +75,8 @@ const Product = ({productList}: ProductListInterface) => (
               alt={title}
             />
           </ImageContainer>
-          <h3>{title}</h3>
-          <p>{CADollar.format(price)}</p>
+          <h4>{title}</h4>
+          <p>C{CADollar.format(price)}</p>
         </ProductContainer>
       )}
     )}
