@@ -7,6 +7,10 @@ const StyledApp = styled.div`
   max-width: 1200px;
   margin: 0 auto;
 `
+
+const StyledHeader = styled.h1`
+  font-family: 'Rubik', sans-serif;
+`
 const StyledMain = styled.main`
   display: flex;
   flex-wrap: wrap;
@@ -38,7 +42,7 @@ function App() {
   return (
     <StyledApp>
       <header>
-        <h1>My Store</h1>
+        <StyledHeader>My Store</StyledHeader>
         <label htmlFor='search'>Search by Category (electronics, jewelery, men's clothing, women's clothing)</label>
         <input
           type='text'
