@@ -68,6 +68,7 @@ const Product = ({productList}: ProductListInterface) => (
         <ProductContainer
           key={id}
           className='app__product-container'
+          tabIndex={0}
         >
           <ImageContainer>
             <img
