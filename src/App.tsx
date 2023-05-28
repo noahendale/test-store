@@ -19,36 +19,46 @@ const StyledMain = styled.main`
 function App() {
   const [products, setProducts] = useState([])
   const [searchValue, setSearchValue] = useState('')
+  const [onlyShowFavs, setOnlyShowFavs] = useState(false)
   const apiEndpoint = 'https://fakestoreapi.com/products'
 
-  const fetchProducts = () => {
-    fetch(apiEndpoint)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => setProducts(data))
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch(apiEndpoint)
+
+      if (!res.ok) throw new Error('Failed to fetch products')
+
+      const data = await res.json();
+
+      return setProducts(data)
+    } catch (error) {
+      console.error('Error fetching products: ', error.message)
+    }
   }
 
   useEffect(() => {
     fetchProducts()
   }, [])
 
-  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    // show all products if search field is empty
+    if (!searchValue) return fetchProducts()
 
-    const productsMatchingSearch = fetch(`${apiEndpoint}/category/${searchValue}`)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => setProducts(data))
+    try {
+      const response = await fetch(`${apiEndpoint}/category/${searchValue}`)
+      
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`)
 
-    return productsMatchingSearch
+      const data = await response.json()
+
+      setProducts(data)
+
+      return data
+    } catch (error) {
+      console.error('Error', error)
+      throw error
+    }
   }
 
   return (
@@ -61,13 +71,14 @@ function App() {
             type='text'
             id='search'
             onChange={e => setSearchValue(e.target.value)}
-            required
           />
           <button type='submit'>Search</button>
         </form>
       </header>
+      <label htmlFor="onlyShowFavs">Favourites</label>
+      <input type="checkbox" id='onlyShowFavs' onClick={() => setOnlyShowFavs(!onlyShowFavs)}/>
       <StyledMain>
-        {products.length < 1 ? <p>No matching products, sorry</p> : <Product productList={products}/>}
+        {products.length < 1 ? <p>No matching products, sorry</p> : <Product productList={products} onlyShowFavs={onlyShowFavs}/>}
       </StyledMain>
     </StyledApp>
   );

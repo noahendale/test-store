@@ -18,6 +18,7 @@ interface ProductInterface {
 
 interface ProductListInterface {
   productList: ProductInterface[];
+  onlyShowFavs: boolean;
 }
 
 const ProductContainer = styled.div`
@@ -83,7 +84,7 @@ const DescriptionParagraph = styled.p`
   }
 `
 
-const Product = ({ productList }: ProductListInterface) => {
+const Product = ({ productList, onlyShowFavs }: ProductListInterface) => {
   const [showDescriptions, setShowDescriptions] = useState(
     productList.map(() => false)
   );
@@ -123,6 +124,8 @@ const Product = ({ productList }: ProductListInterface) => {
     <>
       {productList.map((product: ProductInterface, index: number) => {
         const { title, image, price, id, description } = product;
+        // skip product if 'Favourites' is checked and product hasn't been favourited
+        if (favourites.indexOf(id) === -1 && onlyShowFavs) return null
 
         const CADollar = new Intl.NumberFormat('en-CA', {
           style: 'currency',
