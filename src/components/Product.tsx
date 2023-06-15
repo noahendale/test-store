@@ -93,6 +93,7 @@ const Product = ({ productList, onlyShowFavs }: ProductListInterface) => {
     // check if anything in localstorage before initializing state
     const storedFavourites = localStorage.getItem('favourites')
     if (storedFavourites !== null) return JSON.parse(storedFavourites)
+    return []
   })
 
   useEffect(() => {
@@ -125,7 +126,7 @@ const Product = ({ productList, onlyShowFavs }: ProductListInterface) => {
       {productList.map((product: ProductInterface, index: number) => {
         const { title, image, price, id, description } = product;
         // skip product if 'Favourites' is checked and product hasn't been favourited
-        if (favourites.indexOf(id) === -1 && onlyShowFavs) return null
+        if (favourites?.indexOf(id) === -1 && onlyShowFavs) return null
 
         const CADollar = new Intl.NumberFormat('en-CA', {
           style: 'currency',
@@ -139,7 +140,7 @@ const Product = ({ productList, onlyShowFavs }: ProductListInterface) => {
             tabIndex={0}
           >
             <StyledButton className='favourite' onClick={() => toggleFavourite(id)}>
-              {favourites.indexOf(id) === -1 ? <FavoriteBorderIcon /> : <FavoriteIcon/>}
+              {favourites?.indexOf(id) === -1 ? <FavoriteBorderIcon /> : <FavoriteIcon/>}
             </StyledButton>
             <ImageContainer>
               <img src={image} alt={title} />
